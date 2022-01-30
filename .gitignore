@@ -1,4 +1,5 @@
 .idea/
+coverage/
 
 .byebug_history
 script.bak

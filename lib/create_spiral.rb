@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-#require 'byebug'
+# require 'byebug'
 
 class CreateSpiral
   attr_reader :max_increment, :x_ceiling, :x_base, :y_ceiling, :y_base, :is_clocking
@@ -43,7 +43,7 @@ class CreateSpiral
   end
 
   def fill_top_right(work_h)
-    num_val = work_h[@y_base.to_s][(@x_base-1).to_s] || 0
+    num_val = work_h[@y_base.to_s][(@x_base - 1).to_s] || 0
     (@x_base..@x_ceiling).each do |x_incr|
       next unless work_h[@y_base.to_s][x_incr.to_s].nil?
 
@@ -52,10 +52,11 @@ class CreateSpiral
       @is_clocking = false if num_val == @max_increment * @max_increment
     end
     @y_base += 1
+    work_h
   end
 
   def fill_right_down(work_h)
-    num_val = work_h[(@y_base-1).to_s][@x_ceiling.to_s]
+    num_val = work_h[(@y_base - 1).to_s][@x_ceiling.to_s]
     (@y_base..@y_ceiling).each do |y_incr|
       next unless work_h[y_incr.to_s][@x_ceiling.to_s].nil?
 
@@ -64,10 +65,11 @@ class CreateSpiral
       @is_clocking = false if num_val == @max_increment * @max_increment
     end
     @x_ceiling -= 1
+    work_h
   end
 
   def fill_bottom_left(work_h)
-    num_val = work_h[@y_ceiling.to_s][(@x_ceiling+1).to_s]
+    num_val = work_h[@y_ceiling.to_s][(@x_ceiling + 1).to_s]
     @x_ceiling.downto(@x_base) do |x_incr|
       next unless work_h[@y_ceiling.to_s][x_incr.to_s].nil?
 
@@ -76,10 +78,11 @@ class CreateSpiral
       @is_clocking = false if num_val == @max_increment * @max_increment
     end
     @y_ceiling -= 1
+    work_h
   end
 
   def fill_left_up(work_h)
-    num_val = work_h[(@y_ceiling+1).to_s][@x_base.to_s]
+    num_val = work_h[(@y_ceiling + 1).to_s][@x_base.to_s]
     @y_ceiling.downto(@y_base) do |y_decr|
       next unless work_h[y_decr.to_s][@x_base.to_s].nil?
 
@@ -88,6 +91,7 @@ class CreateSpiral
       @is_clocking = false if num_val == @max_increment * @max_increment
     end
     @x_base += 1
+    work_h
   end
 
   def convert_h_to_a(hash)
