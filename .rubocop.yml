@@ -1,0 +1,9 @@
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'white_board.rb'
+    - 'spec/**/*.rb'
+
+Style/Documentation:
+  Enabled: false
