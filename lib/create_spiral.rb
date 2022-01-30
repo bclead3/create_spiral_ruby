@@ -19,13 +19,13 @@ class CreateSpiral
 
     working_h = create_empty_hash
     while @is_clocking
-      fill_top_right(working_h, @x_base - 1, @y_base)
+      fill_top_right(working_h)
       # pp working_h
-      fill_right_down(working_h, @x_ceiling, @y_base - 1)
+      fill_right_down(working_h)
       # pp working_h
-      fill_bottom_left(working_h, @x_ceiling + 1, @y_ceiling)
+      fill_bottom_left(working_h)
       # pp working_h
-      fill_left_up(working_h, @x_base, @y_ceiling + 1)
+      fill_left_up(working_h)
       # pp working_h
     end
     convert_h_to_a(working_h)
@@ -33,61 +33,17 @@ class CreateSpiral
 
   def create_empty_hash
     ret_h = {}
-    (0..(@y_ceiling)).each do |row_increment|
+    (0..@y_ceiling).each do |row_increment|
       ret_h[row_increment.to_s] = {}
-      (0..(@x_ceiling)).each do |col_increment|
+      (0..@x_ceiling).each do |col_increment|
         ret_h[row_increment.to_s][col_increment.to_s] = nil
       end
     end
     ret_h
   end
 
-  def fill_right_down(work_h, x_val, y_val)
-    # puts "x_val:#{x_val} y_val:#{y_val} @x_low:#{@x_low} @y_low:#{@y_low}"
-    num_val = work_h[y_val.to_s][x_val.to_s]
-    # puts "num_val:#{num_val}"
-    (@y_base..@y_ceiling).each do |y_incr|
-      next unless work_h[y_incr.to_s][x_val.to_s].nil?
-
-      num_val += 1
-      work_h[y_incr.to_s][x_val.to_s] = num_val
-      @is_clocking = false if num_val == @max_increment * @max_increment
-    end
-    @x_ceiling -= 1
-  end
-
-  def fill_bottom_left(work_h, x_val, y_val)
-    # puts "x_val:#{x_val} y_val:#{y_val} @x_low:#{@x_low} @y_low:#{@y_low}"
-    num_val = work_h[y_val.to_s][x_val.to_s]
-    # puts "num_val:#{num_val}"
-    @x_ceiling.downto(@x_base) do |x_incr|
-      next unless work_h[y_val.to_s][x_incr.to_s].nil?
-
-      num_val += 1
-      work_h[y_val.to_s][x_incr.to_s] = num_val
-      @is_clocking = false if num_val == @max_increment * @max_increment
-    end
-    @y_ceiling -= 1
-  end
-
-  def fill_left_up(work_h, x_val, y_val)
-    # puts "x_val:#{x_val} y_val:#{y_val} @x_low:#{@x_low} @y_low:#{@y_low}"
-    num_val = work_h[y_val.to_s][x_val.to_s]
-    # puts "num_val:#{num_val}"
-    @y_ceiling.downto(@y_base) do |y_decr|
-      next unless work_h[y_decr.to_s][x_val.to_s].nil?
-
-      num_val += 1
-      work_h[y_decr.to_s][x_val.to_s] = num_val
-      @is_clocking = false if num_val == @max_increment * @max_increment
-    end
-    @x_base += 1
-  end
-
-  def fill_top_right(work_h, x_val, y_val)
-    # puts "x_val:#{x_val} y_val:#{y_val} @x_low:#{@x_low} @y_low:#{@y_low}"
-    num_val = work_h[y_val.to_s][x_val.to_s] || 0
-    # puts "num_val:#{num_val}"
+  def fill_top_right(work_h)
+    num_val = work_h[@y_base.to_s][(@x_base-1).to_s] || 0
     (@x_base..@x_ceiling).each do |x_incr|
       next unless work_h[@y_base.to_s][x_incr.to_s].nil?
 
@@ -96,6 +52,42 @@ class CreateSpiral
       @is_clocking = false if num_val == @max_increment * @max_increment
     end
     @y_base += 1
+  end
+
+  def fill_right_down(work_h)
+    num_val = work_h[(@y_base-1).to_s][@x_ceiling.to_s]
+    (@y_base..@y_ceiling).each do |y_incr|
+      next unless work_h[y_incr.to_s][@x_ceiling.to_s].nil?
+
+      num_val += 1
+      work_h[y_incr.to_s][@x_ceiling.to_s] = num_val
+      @is_clocking = false if num_val == @max_increment * @max_increment
+    end
+    @x_ceiling -= 1
+  end
+
+  def fill_bottom_left(work_h)
+    num_val = work_h[@y_ceiling.to_s][(@x_ceiling+1).to_s]
+    @x_ceiling.downto(@x_base) do |x_incr|
+      next unless work_h[@y_ceiling.to_s][x_incr.to_s].nil?
+
+      num_val += 1
+      work_h[@y_ceiling.to_s][x_incr.to_s] = num_val
+      @is_clocking = false if num_val == @max_increment * @max_increment
+    end
+    @y_ceiling -= 1
+  end
+
+  def fill_left_up(work_h)
+    num_val = work_h[(@y_ceiling+1).to_s][@x_base.to_s]
+    @y_ceiling.downto(@y_base) do |y_decr|
+      next unless work_h[y_decr.to_s][@x_base.to_s].nil?
+
+      num_val += 1
+      work_h[y_decr.to_s][@x_base.to_s] = num_val
+      @is_clocking = false if num_val == @max_increment * @max_increment
+    end
+    @x_base += 1
   end
 
   def convert_h_to_a(hash)

@@ -1,8 +1,9 @@
 require 'spec_helper'
 require 'create_spiral'
 RSpec.describe CreateSpiral do
+  let(:subject) { CreateSpiral.new }
+
   describe 'initialization' do
-    let(:subject) { CreateSpiral.new }
     it 'defaults' do
       expect(subject.max_increment).to eq(3)
       expect(subject.x_ceiling).to eq(2)
@@ -57,12 +58,37 @@ RSpec.describe CreateSpiral do
       end
     end
 
-    describe '#' do
-
+    describe '#create_empty_hash' do
+      it 'create_empty_hash works' do
+        hash = subject.create_empty_hash
+        expect(hash.keys.count).to eq(3)
+        expect(hash.keys).to eq(%w[0 1 2])
+        expect(hash['0']).to eq({'0'=>nil, '1'=>nil, '2'=>nil})
+        expect(hash['1']).to eq({'0'=>nil, '1'=>nil, '2'=>nil})
+        expect(hash['2']).to eq({'0'=>nil, '1'=>nil, '2'=>nil})
+      end
     end
   end
 
-  describe '' do
+  describe '#fill_top_right' do
+    let(:empty_h) { subject.create_empty_hash }
+    it '' do
+      subject.fill_top_right(empty_h)
+      expect(empty_h['0']).to eq({ '0'=>1, '1'=>2, '2'=>3 })
+      expect(empty_h['1']).to eq({'0'=>nil, '1'=>nil, '2'=>nil})
+      expect(empty_h['2']).to eq({'0'=>nil, '1'=>nil, '2'=>nil})
+    end
 
+    describe '#fill_top_right for a larger hash' do
+      let(:subject) { CreateSpiral.new(5) }
+      let(:empty_h) { subject.create_empty_hash }
+      it '' do
+        subject.fill_top_right(empty_h)
+        expect(empty_h['0']).to eq({ '0'=>1, '1'=>2, '2'=>3, '3'=>4, '4'=>5 })
+        expect(empty_h['1']).to eq({ '0'=>nil, '1'=>nil, '2'=>nil, '3'=>nil, '4'=>nil })
+      end
+    end
   end
+
+
 end
