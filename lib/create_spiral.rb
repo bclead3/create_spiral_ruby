@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# require 'byebug'
+require 'byebug'
 
 class CreateSpiral
   attr_reader :max_increment, :x_ceiling, :x_base, :y_ceiling, :y_base, :is_clocking
@@ -20,13 +20,9 @@ class CreateSpiral
     working_h = create_empty_hash
     while @is_clocking
       fill_top_right(working_h)
-      # pp working_h
       fill_right_down(working_h)
-      # pp working_h
       fill_bottom_left(working_h)
-      # pp working_h
       fill_left_up(working_h)
-      # pp working_h
     end
     convert_h_to_a(working_h)
   end
@@ -44,52 +40,33 @@ class CreateSpiral
 
   def fill_top_right(work_h)
     num_val = work_h[@y_base.to_s][(@x_base - 1).to_s] || 0
-    (@x_base..@x_ceiling).each do |x_incr|
-      next unless work_h[@y_base.to_s][x_incr.to_s].nil?
-
-      num_val += 1
-      work_h[@y_base.to_s][x_incr.to_s] = num_val
-      @is_clocking = false if num_val == @max_increment * @max_increment
-    end
+    looper(work_h, @x_base, @x_ceiling, num_val, 'y')
     @y_base += 1
     work_h
   end
 
   def fill_right_down(work_h)
     num_val = work_h[(@y_base - 1).to_s][@x_ceiling.to_s]
-    (@y_base..@y_ceiling).each do |y_incr|
-      next unless work_h[y_incr.to_s][@x_ceiling.to_s].nil?
-
-      num_val += 1
-      work_h[y_incr.to_s][@x_ceiling.to_s] = num_val
-      @is_clocking = false if num_val == @max_increment * @max_increment
-    end
+    looper(work_h, @y_base, @y_ceiling, num_val, 'x')
     @x_ceiling -= 1
+    work_h
+  end
+
+  def looper(work_h, low, high, num_val, keep_x_y)
+    sub_looper(work_h, low, high, num_val, keep_x_y)
     work_h
   end
 
   def fill_bottom_left(work_h)
     num_val = work_h[@y_ceiling.to_s][(@x_ceiling + 1).to_s]
-    @x_ceiling.downto(@x_base) do |x_incr|
-      next unless work_h[@y_ceiling.to_s][x_incr.to_s].nil?
-
-      num_val += 1
-      work_h[@y_ceiling.to_s][x_incr.to_s] = num_val
-      @is_clocking = false if num_val == @max_increment * @max_increment
-    end
+    decrament_looper(work_h, @x_base, @x_ceiling, num_val, 'y')
     @y_ceiling -= 1
     work_h
   end
 
   def fill_left_up(work_h)
     num_val = work_h[(@y_ceiling + 1).to_s][@x_base.to_s]
-    @y_ceiling.downto(@y_base) do |y_decr|
-      next unless work_h[y_decr.to_s][@x_base.to_s].nil?
-
-      num_val += 1
-      work_h[y_decr.to_s][@x_base.to_s] = num_val
-      @is_clocking = false if num_val == @max_increment * @max_increment
-    end
+    decrament_looper(work_h, @y_base, @y_ceiling, num_val, 'x')
     @x_base += 1
     work_h
   end
@@ -104,5 +81,51 @@ class CreateSpiral
       ret_arr << arr
     end
     ret_arr
+  end
+
+  private
+
+  def sub_looper(work_h, low, high, num_val, keep_x_y)
+    (low..high).each do |incr|
+      num_val = process_x(work_h, incr, num_val) if keep_x_y == 'x'
+      num_val = process_y(work_h, incr, num_val) if keep_x_y == 'y'
+      @is_clocking = false if num_val == @max_increment * @max_increment
+    end
+  end
+
+  def process_x(work_h, incr, num_val)
+    return if work_h[incr.to_s][@x_ceiling.to_s]
+
+    num_val += 1
+    work_h[incr.to_s][@x_ceiling.to_s] = num_val
+  end
+
+  def process_y(work_h, incr, num_val)
+    return if work_h[@y_base.to_s][incr.to_s]
+
+    num_val += 1
+    work_h[@y_base.to_s][incr.to_s] = num_val
+  end
+
+  def decrament_looper(work_h, low, high, num_val, keep_x_y)
+    high.downto(low) do |decr|
+      num_val = process_decr_x(work_h, decr, num_val) if keep_x_y == 'x'
+      num_val = process_decr_y(work_h, decr, num_val) if keep_x_y == 'y'
+      @is_clocking = false if num_val == @max_increment * @max_increment
+    end
+  end
+
+  def process_decr_x(work_h, decr, num_val)
+    return if work_h[decr.to_s][@x_base.to_s]
+
+    num_val += 1
+    work_h[decr.to_s][@x_base.to_s] = num_val
+  end
+
+  def process_decr_y(work_h, decr, num_val)
+    return if work_h[@y_ceiling.to_s][decr.to_s]
+
+    num_val += 1
+    work_h[@y_ceiling.to_s][decr.to_s] = num_val
   end
 end
