@@ -2,6 +2,9 @@
 
 load 'lib/create_spiral.rb'
 
-obj = CreateSpiral.new(7)
-arr = obj.process
-pp arr
+ARGV.each do |argument|
+  obj = CreateSpiral.new(argument)
+  arr = obj.process
+  puts ''
+  pp arr
+end
